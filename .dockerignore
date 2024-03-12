@@ -1,0 +1,51 @@
+# Node modules
+node_modules
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Docker
+.dockerignore
+Dockerfile*
+docker-compose*
+
+# Output
+dist
+**/*.js
+
+# Logs
+bot.log
+
+# Configuration
+config
+files
+sessions
+
+# Environment
+.env*
+
+# GitHub
+.github
+*.md
+LICENSE
+
+# Dev container
+.devcontainer
+
+# ESLint
+.eslintcache
+.eslintrc*
+
+# Database
+db
+
+# pgAdmin
+pgadmin
+
+# SonarCloud
+sonar-project.properties
+
+# MacOS
+.DS_Store

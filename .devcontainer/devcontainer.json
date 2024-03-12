@@ -1,0 +1,10 @@
+{
+  "dockerComposeFile": "../docker-compose.dev.yaml",
+  "forwardPorts": [
+    8081
+  ],
+  "name": "marvin",
+  "service": "bot",
+  "shutdownAction": "stopCompose",
+  "workspaceFolder": "/app"
+}

@@ -1,0 +1,2 @@
+export const STANDARD_DATE_FORMAT = 'DD.MM.YYYY';
+export const ABSENCE_DATE_FORMAT = 'YYYY-MM-DD';
