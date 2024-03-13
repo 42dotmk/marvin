@@ -3,7 +3,7 @@ version: "3.8"
 services:
   bot:
     container_name: marvin
-    image: marvin
+    image: ghcr.io/42dotmk/marvin:latest
     restart: unless-stopped
     env_file:
       - .env
