@@ -2,7 +2,7 @@
 FROM --platform=${BUILDPLATFORM} node:20-alpine AS development
 WORKDIR /app
 
-RUN apk add --no-cache postgresql-client git openjdk17 nodejs
+RUN apk add --no-cache git nodejs
 
 COPY package.json package-lock.json ./
 RUN npm i --ignore-scripts
@@ -16,14 +16,13 @@ CMD [ "npm", "run", "dev" ]
 FROM --platform=${TARGETPLATFORM} node:20-alpine AS production
 WORKDIR /app
 
-RUN apk add --no-cache postgresql-client
+RUN apk add --no-cache
 
-COPY package.json package-lock.json start.sh ./
+COPY package.json package-lock.json ./
 
 COPY --from=development /app/node_modules ./node_modules
 RUN npm prune --production
 
-
 COPY --from=development /app/dist ./dist
 
-CMD [ "sh", "./start.sh" ]
+CMD [ "node", "dist/index.js" ]

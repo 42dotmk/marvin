@@ -1,6 +1,11 @@
 {
+  "exclude": [
+    "node_modules",
+    "dist"
+  ],
   "compilerOptions": {
     "allowUnreachableCode": false,
+    "skipLibCheck": true,
     "allowUnusedLabels": false,
     "checkJs": true,
     "emitDecoratorMetadata": true,
