@@ -9,6 +9,7 @@
     "graphql-request": "^6.1.0",
     "moment": "^2.30.1",
     "ollama": "^0.4.9",
+    "queue": "^7.0.0",
     "winston": "^3.10.0"
   },
   "description": "marvin",

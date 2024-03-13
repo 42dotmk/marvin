@@ -22,8 +22,8 @@ export const config: BotConfig = {
   applicationId: env['APPLICATION_ID'] ?? '',
   botToken: env['BOT_TOKEN'] ?? '',
   channels: {
-    ai: env['CHANNEL_GENERAL'],
-    general: env['CHANNEL_AI'],
+    ai: env['CHANNEL_AI'],
+    general: env['CHANNEL_GENERAL'],
   },
   emoji: env['EMOJI'],
 };

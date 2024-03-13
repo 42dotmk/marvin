@@ -6,6 +6,8 @@ import { attachEventListeners } from './utils/events.js';
 
 logger.info(messages.starting);
 
+logger.info(`Listening on ${config.channels?.ai}`);
+
 await attachEventListeners();
 
 logger.info('Logging in');
