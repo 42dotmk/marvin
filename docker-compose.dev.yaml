@@ -11,23 +11,7 @@ services:
     restart: unless-stopped
     env_file:
       - .env
-    depends_on:
-      - database
     volumes:
       - .:/app
       - /app/node_modules
     command: ["npm", "run", "dev"]
-
-  pgadmin:
-    container_name: marvin-pgadmin-dev
-    image: dpage/pgadmin4:8
-    restart: unless-stopped
-    ports:
-      - 8081:80
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=test@test.com
-      - PGADMIN_DEFAULT_PASSWORD=test
-    depends_on:
-      - database
-    volumes:
-      - ./pgadmin:/var/lib/pgadmin
