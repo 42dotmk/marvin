@@ -12,4 +12,4 @@ await attachEventListeners();
 
 logger.info('Logging in');
 await client.login(config.botToken);
-logger.info('Logging in');
+logger.info('Logged in');

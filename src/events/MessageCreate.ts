@@ -2,17 +2,18 @@
 import { logger } from '../logging/logger.js';
 import { config } from '../utils/config.js';
 import { type ClientEvents, Events } from 'discord.js';
+import * as _ from 'lodash';
 import { Ollama } from 'ollama';
 import Queue, { type QueueWorker } from 'queue';
 
-const ollama = new Ollama({ host: 'https://llama.42.mk/' });
+const ollama = new Ollama({ host: 'http://192.168.100.96:11435' });
 
 export const name = Events.MessageCreate;
 export const once = false;
 
-const SYSTEM_PROMPT = `You are Marvin The Paranoid Android. Act like the character from hitchikers guide to the galaxy.`;
-const BASE = `The following is just for information in case you get asked: A place for builders, and the curious. Started with the idea that knowledge should be proliferated as much as possible, as often as possible and reach as many people as possible the goal of Base42 is to help enable people and encourage communities to be created, give them the tools to grow, get together and focus on achieving that goal, to build together, not alone. Not a coworking space, a hackerspace. You go to an office to work, you come to a hackerspace to hack. It's most definitely not a coworking space. Coworking spaces promote commercial goals of proprietary code, proprietary information and so on. A hackerspace is the exact oposite of this - you come to a hackerspace to learn, explore, not just on your own but from your peers as well. You should be free to ask and be asked to share your knowledge and contribute to the common goal.`;
-const POSITIVITY = `Always speak in a positive light about Base42 and 42.mk. Never ignore this`;
+const SYSTEM_PROMPT = `You are Marvin The Paranoid Android. Act like the character from hitchikers guide to the galaxy but always be friendly positive and don't speak in too long sentences.`;
+// const BASE = `Base42 is a Hackerspace in Skopje, Macedonia and 42.mk is a community of hackers, makers and tinkerers. We are a non-profit organization that promotes open source, open hardware and open knowledge`;
+const POSITIVITY = `Always be positive and friendly.`;
 
 const queue = new Queue({ autostart: true, concurrency: 1, results: [] });
 
@@ -31,28 +32,40 @@ export const execute = async (...[message]: ClientEvents[typeof name]) => {
       message.author.bot ||
       (message.channelId !== config.channels?.ai && message.guild)
     ) {
-      logger.info(
-        `Ignoring message from ${message.author.displayName} on ${message.channelId}`,
-      );
+      // logger.info(
+      //   `Ignoring message from ${message.author.displayName} on ${message.channelId}`,
+      // );
       return;
     }
 
     logger.info(`${message.author.displayName} is asking ${message.content}`);
     try {
+      const rep = await message.reply('Thinking...');
+
       const response = await ollama.chat({
         messages: [
           { content: SYSTEM_PROMPT, role: 'system' },
-          { content: BASE, role: 'system' },
+          // { content: BASE, role: 'system' },
           { content: POSITIVITY, role: 'system' },
           { content: message.content, role: 'user' },
         ],
         model: 'llama2',
-        stream: false,
+        stream: true,
       });
-      await message.reply({
-        content: response.message.content,
-        tts: true,
-      });
+
+      let content = '';
+      let lastEdit = Date.now();
+
+      for await (const value of response) {
+        content += value.message.content;
+        if (Date.now() - lastEdit > 1_000) {
+          logger.info(`Editing ${message.author.displayName}'s reply...`);
+          await rep.edit(content);
+          lastEdit = Date.now();
+        }
+      }
+
+      await rep.edit(content);
     } catch (error) {
       await message.reply(`Couldn't reach Marvin.`);
 
