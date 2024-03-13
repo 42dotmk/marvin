@@ -2,7 +2,6 @@
 import { logger } from '../logging/logger.js';
 import { config } from '../utils/config.js';
 import { type ClientEvents, Events } from 'discord.js';
-import * as _ from 'lodash';
 import { Ollama } from 'ollama';
 import Queue, { type QueueWorker } from 'queue';
 
