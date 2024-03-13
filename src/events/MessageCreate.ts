@@ -10,10 +10,6 @@ const ollama = new Ollama({ host: 'http://192.168.100.96:11435' });
 export const name = Events.MessageCreate;
 export const once = false;
 
-const SYSTEM_PROMPT = `You are Marvin The Paranoid Android. Act like the character from hitchikers guide to the galaxy but always be friendly positive and don't speak in too long sentences.`;
-// const BASE = `Base42 is a Hackerspace in Skopje, Macedonia and 42.mk is a community of hackers, makers and tinkerers. We are a non-profit organization that promotes open source, open hardware and open knowledge`;
-const POSITIVITY = `Always be positive and friendly.`;
-
 const queue = new Queue({ autostart: true, concurrency: 1, results: [] });
 
 // begin processing, get notified on end / failure
@@ -42,13 +38,8 @@ export const execute = async (...[message]: ClientEvents[typeof name]) => {
       const rep = await message.reply('Thinking...');
 
       const response = await ollama.chat({
-        messages: [
-          { content: SYSTEM_PROMPT, role: 'system' },
-          // { content: BASE, role: 'system' },
-          { content: POSITIVITY, role: 'system' },
-          { content: message.content, role: 'user' },
-        ],
-        model: 'llama2',
+        messages: [{ content: message.content, role: 'user' }],
+        model: 'marvin:latest',
         stream: true,
       });
 
