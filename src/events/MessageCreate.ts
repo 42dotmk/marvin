@@ -6,11 +6,17 @@ import { Ollama } from 'ollama';
 import Queue, { type QueueWorker } from 'queue';
 
 const ollama = new Ollama({ host: 'http://192.168.100.96:11435' });
+const { env } = process;
 
 export const name = Events.MessageCreate;
 export const once = false;
 
 const queue = new Queue({ autostart: true, concurrency: 1, results: [] });
+
+const ENV_PROMPT =
+  // eslint-disable-next-line n/no-process-env
+  env['SYSTEM_PROMPT'] ??
+  `You are Marvin an assistant, inspired by The Hitchhiker's Guide to the Galaxy. The messages sent to you will be by multiple users prefixed with their name and 'says :' (Example: 'John says:') respond to anything they ask. The prefix "name says:" is only for your information do not reply in the same way. Do not start your replies with "Marvin:". You are replying to the messages directly, be direct. Be respectful. Do not roleplay. Do not write more than 2 paragraphs. Do not use the phrase adjusts glasses. EVER.`;
 
 // begin processing, get notified on end / failure
 queue.start((error) => {
@@ -20,7 +26,7 @@ queue.start((error) => {
 
 const context: Array<{ content: string; role: string }> = [
   {
-    content: `You are Marvin an assistant, inspired by The Hitchhiker's Guide to the Galaxy. The messages sent to you will be by multiple users prefixed with their name and 'says :' (Example: 'John says:') respond to anything they ask. The prefix "name says:" is only for your information do not reply in the same way. Do not start your replies with "Marvin:" Be respectful. Do not roleplay. Do not write more than 2 paragraphs. Do not use the phrase adjusts glasses. EVER.`,
+    content: ENV_PROMPT,
     role: 'system',
   },
 ];
