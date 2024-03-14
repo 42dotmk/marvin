@@ -18,6 +18,13 @@ queue.start((error) => {
   logger.info('all done:', queue.results);
 });
 
+const context: Array<{ content: string; role: string }> = [
+  {
+    content: `You are Marvin an assistant, inspired by The Hitchhiker's Guide to the Galaxy. The messages sent to you will be by multiple users prefixed with their name and 'says :' (Example: 'John says:') respond to anything they ask. The prefix "name says:" is only for your information do not reply in the same way. Do not start your replies with "Marvin:" Be respectful. Do not roleplay. Do not write more than 2 paragraphs. Do not use the phrase adjusts glasses. EVER.`,
+    role: 'system',
+  },
+];
+
 export const execute = async (...[message]: ClientEvents[typeof name]) => {
   const reply = async () => {
     logger.info(
@@ -35,11 +42,20 @@ export const execute = async (...[message]: ClientEvents[typeof name]) => {
 
     logger.info(`${message.author.displayName} is asking ${message.content}`);
     try {
-      const rep = await message.reply('Thinking...');
+      const rep = await message.reply(
+        'https://media.tenor.com/wpSo-8CrXqUAAAAi/loading-loading-forever.gif',
+      );
+      const writtenMessage = `${message.author.displayName} says: ${message.content}`;
+
+      if (context.length > 30) {
+        context.shift();
+      }
+
+      context.push({ content: writtenMessage, role: 'user' });
 
       const response = await ollama.chat({
-        messages: [{ content: message.content, role: 'user' }],
-        model: 'marvin:latest',
+        messages: context,
+        model: 'mistral:7b',
         stream: true,
       });
 
@@ -55,9 +71,12 @@ export const execute = async (...[message]: ClientEvents[typeof name]) => {
         }
       }
 
+      context.push({ content, role: 'assistant' });
       await rep.edit(content);
     } catch (error) {
-      await message.reply(`Couldn't reach Marvin.`);
+      await message.reply(
+        `https://tenor.com/view/falling-star-wars-robot-gif-20159502`,
+      );
 
       logger.error(error);
     }
