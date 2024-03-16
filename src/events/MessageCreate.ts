@@ -24,12 +24,12 @@ queue.start((error) => {
   logger.info('all done:', queue.results);
 });
 
-const context: Array<{ content: string; role: string }> = [
-  {
-    content: ENV_PROMPT,
-    role: 'system',
-  },
-];
+const SYSTEM_PROMPT = {
+  content: ENV_PROMPT,
+  role: 'system',
+};
+
+const context: Array<{ content: string; role: string }> = [];
 
 export const execute = async (...[message]: ClientEvents[typeof name]) => {
   const reply = async () => {
@@ -60,7 +60,7 @@ export const execute = async (...[message]: ClientEvents[typeof name]) => {
       context.push({ content: writtenMessage, role: 'user' });
 
       const response = await ollama.chat({
-        messages: context,
+        messages: [SYSTEM_PROMPT, ...context],
         model: 'mistral:7b',
         stream: true,
       });
