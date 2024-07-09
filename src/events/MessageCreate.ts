@@ -8,8 +8,14 @@ import Queue, { type QueueWorker } from 'queue';
 
 const { env } = process;
 
+const LLAMA_URL = env['LLAMA_URL'] ?? 'http://192.168.100.96:11435';
+const PROMPT =
+  env['SYSTEM_PROMPT'] ??
+  `You are Marvin an assistant, inspired by The Hitchhiker's Guide to the Galaxy. The messages sent to you will be by multiple users prefixed with their name and 'says :' (Example: 'John says:') respond to anything they ask. The prefix "name says:" is only for your information do not reply in the same way. Do not start your replies with "Marvin:". You are replying to the messages directly, be direct. Be respectful. Do not roleplay. Do not write more than 2 paragraphs. Do not use the phrase adjusts glasses. EVER.`;
+const MODEL = env['MODEL'] ?? 'mistral:7b';
+
 const ollama = new Ollama({
-  host: env['LLAMA_URL'] ?? 'http://192.168.100.96:11435',
+  host: LLAMA_URL,
 });
 
 export const name = Events.MessageCreate;
@@ -17,19 +23,13 @@ export const once = false;
 
 const queue = new Queue({ autostart: true, concurrency: 1, results: [] });
 
-const ENV_PROMPT =
-  // eslint-disable-next-line n/no-process-env
-  env['SYSTEM_PROMPT'] ??
-  `You are Marvin an assistant, inspired by The Hitchhiker's Guide to the Galaxy. The messages sent to you will be by multiple users prefixed with their name and 'says :' (Example: 'John says:') respond to anything they ask. The prefix "name says:" is only for your information do not reply in the same way. Do not start your replies with "Marvin:". You are replying to the messages directly, be direct. Be respectful. Do not roleplay. Do not write more than 2 paragraphs. Do not use the phrase adjusts glasses. EVER.`;
-
-// begin processing, get notified on end / failure
 queue.start((error) => {
   if (error) throw error;
   logger.info('all done:', queue.results);
 });
 
 const SYSTEM_PROMPT = {
-  content: ENV_PROMPT,
+  content: PROMPT,
   role: 'system',
 };
 
@@ -65,7 +65,7 @@ export const execute = async (...[message]: ClientEvents[typeof name]) => {
 
       const response = await ollama.chat({
         messages: [SYSTEM_PROMPT, ...context],
-        model: 'mistral:7b',
+        model: MODEL,
         stream: true,
       });
 
