@@ -1,3 +1,4 @@
+/* eslint-disable n/no-process-env */
 /* eslint-disable promise/prefer-await-to-then */
 import { logger } from '../logging/logger.js';
 import { config } from '../utils/config.js';
@@ -5,8 +6,11 @@ import { type ClientEvents, Events } from 'discord.js';
 import { Ollama } from 'ollama';
 import Queue, { type QueueWorker } from 'queue';
 
-const ollama = new Ollama({ host: 'http://192.168.100.96:11435' });
 const { env } = process;
+
+const ollama = new Ollama({
+  host: env['LLAMA_URL'] ?? 'http://192.168.100.96:11435',
+});
 
 export const name = Events.MessageCreate;
 export const once = false;
