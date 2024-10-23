@@ -1,5 +1,5 @@
 {
-  "exec": "node --loader ts-node/esm ./src/index.ts",
+  "exec": "node --loader ts-node/esm --experimental-specifier-resolution ./src/index.ts",
   "ext": "*",
   "legacyWatch": true,
   "watch": [

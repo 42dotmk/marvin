@@ -1,11 +1,6 @@
 {
-  "exclude": [
-    "node_modules",
-    "dist"
-  ],
   "compilerOptions": {
     "allowUnreachableCode": false,
-    "skipLibCheck": true,
     "allowUnusedLabels": false,
     "checkJs": true,
     "emitDecoratorMetadata": true,
@@ -27,12 +22,17 @@
     "noUnusedParameters": true,
     "outDir": "dist",
     "resolveJsonModule": true,
+    "skipLibCheck": true,
     "strict": true,
-    "target": "ESNext",
+    "target": "ESNext"
   },
+  "exclude": [
+    "node_modules",
+    "dist"
+  ],
   "ts-node": {
-    "swc": true,
     "files": true,
+    "swc": true,
     "transpileOnly": true
   }
 }
